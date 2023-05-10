@@ -11,5 +11,5 @@ RUN apk del --no-cache .build-deps
 RUN mkdir -p /app
 COPY . /app/
 WORKDIR /app
-ENV FLASK_APP=entrypoints/app.py FLASK_DEBUG=1 PYTHONUNBUFFERED=1
+ENV FLASK_APP=src/entrypoints/app.py FLASK_DEBUG=1 PYTHONUNBUFFERED=1
 CMD flask run --host=0.0.0.0 --port=80
