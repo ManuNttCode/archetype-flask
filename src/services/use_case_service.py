@@ -2,9 +2,9 @@
 import logging
 
 from datetime import date
-from domain import entity_model
-from exceptions import use_case_exception
-from repository import use_case_repository
+from ..domain import entity_model
+""" from exceptions import use_case_exception """
+from src.repository import use_case_repository
 
 
 def do_something(request: entity_model.UseCaseRequest,
@@ -19,7 +19,7 @@ def do_something(request: entity_model.UseCaseRequest,
     """
 
     if request is None:
-        raise use_case_exception.UseCaseRequestException()
+        """ raise use_case_exception.UseCaseRequestException() """
 
     logging.info(f"[**] /use_case_service.do_something")
 

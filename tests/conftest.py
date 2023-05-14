@@ -1,7 +1,6 @@
-
 import pytest
 
-from entrypoints.app import app as flask_app
+from routes.app import app as flask_app
 
 
 @pytest.fixture
