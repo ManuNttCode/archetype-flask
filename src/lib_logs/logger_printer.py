@@ -1,16 +1,26 @@
 import logging
+import uuid as Uuid
+
+from src.lib_logs.logger_constants import NivelType
 
 class LoggerPrinter:
 
-    def __init__(self, negocio, uuid, canal, consumidor):
+    def __init__(self, negocio, canal, consumidor):
         self.negocio = negocio
-        self.uuid = uuid
+        self.uuid = Uuid.uuid4()
         self.canal = canal
         self.consumidor = consumidor
         self.formato_log = "uuid traza: %(uuid)s, tipo de proceso: %(proceso)s, mensaje: %(mensaje)s"
-        self.log = logging.getLogger(__name__)
+        self.logger = logging.getLogger(__name__)
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.INFO)
+        formatter = logging.Formatter(self.formato_log)
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
 
-    def log(self, nivel, mensaje, carga_util, codigo_http, codigo_negocio, proceso):
+    
+
+    def log_message(self, nivel=NivelType, mensaje='', carga_util={}, codigo_http='200', codigo_negocio='ms-example', proceso='Api'):
         log_data = {
             "uuid": self.uuid,
             "proceso": proceso,
@@ -23,11 +33,12 @@ class LoggerPrinter:
             "negocio": self.negocio
         }
 
-        if nivel == logging.INFO:
-            self.log.info(self.formato_log, log_data)
-        elif nivel == logging.DEBUG:
-            self.log.debug(self.formato_log, log_data)
-        elif nivel == logging.WARNING:
-            self.log.warning(self.formato_log, log_data)
-        elif nivel == logging.ERROR:
-            self.log.error(self.formato_log, log_data)
+        switcher = {
+        logging.INFO: self.logger.info,
+        logging.DEBUG: self.logger.debug,
+        logging.WARNING: self.logger.warning,
+        logging.ERROR: self.logger.error
+        }
+        log_function = switcher.get(nivel)
+        if log_function:
+            log_function(self.formato_log % log_data)
