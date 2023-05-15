@@ -1,10 +1,11 @@
-from flask import request, jsonify
+from flask import request, jsonify, Blueprint
 
-def register_routes(app):
-  @app.route("/", methods=['GET'])
-  def root():
+api = Blueprint('api', __name__, url_prefix='/api/v1')
+
+@api.route("/", methods=['GET'])
+def root():
     """
     Root entrypoint
     :return: str
     """
-    return jsonify({'result': 'Todo funcionando mi animalito de dios'}), 200
+    return jsonify({'result': 'is_develop_env'}), 200

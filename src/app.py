@@ -1,21 +1,7 @@
-import uuid
-import logging
+import os
 
-from flask import Flask, jsonify, request, current_app
-from src.domain import entity_model
-from src.repository import use_case_repository
-from src.services import use_case_service
-from src.lib_exceptions.handler.handler_exception import register_errorhandlers
-from src.routes import register_routes
+from . import create_app
 
-
-def create_app():
-    app = Flask(__name__) 
-    register_routes(app)
-    register_errorhandlers(app)
-    return app
-
-
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True)
+app = create_app()
+is_debug_env = True if os.environ.get('FLASK_DEBUG') == '1' else False
+app.run(debug=is_debug_env, port=6060)
