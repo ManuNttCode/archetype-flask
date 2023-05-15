@@ -8,4 +8,7 @@ def root():
     Root entrypoint
     :return: str
     """
-    return jsonify({'result': 'is_develop_env'}), 200
+    num = 123
+
+    numfloat = float(num)
+    return jsonify({'result': numfloat}), 200

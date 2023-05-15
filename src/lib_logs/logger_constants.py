@@ -1,0 +1,8 @@
+VALOR_NA = "NA"
+VALOR_CANAL_EVENTO = "Evento"
+VALOR_CANAL_JOB = "Job"
+
+class ProcessType:
+    ENTRADA = "ENTRADA"
+    SALIDA = "SALIDA"
+    PROCESO = "PROCESO"
