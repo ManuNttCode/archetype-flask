@@ -1,3 +1,11 @@
+from dataclasses import dataclass
+from typing import List
+
+@dataclass()
+class ErrorItem:
+    name: str
+    description: str
+
+@dataclass()
 class ErrorCatalog:
-    def __init__(self, error_details=None):
-        self.error_details = error_details or []
+    error_details = List[ErrorItem]

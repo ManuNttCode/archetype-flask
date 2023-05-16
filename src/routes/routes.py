@@ -1,8 +1,9 @@
 import logging
-from flask import request, jsonify, Blueprint
-from src.lib_exceptions.exceptions.global_api_exception import GlobalApiException
-from src.lib_exceptions.exceptions.service_response_exception import ServiceResponseException
-from src.lib_exceptions.exceptions.validation_exception import ValidationException
+import uuid
+from flask import current_app, request, jsonify, Blueprint
+from src.Repository.use_case_repository import UseCaseRepository
+from src.services.use_case_service import do_something
+from src.domain import entity_model
 from ..lib_logs import logger_printer
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
@@ -18,15 +19,33 @@ def root():
     
     return jsonify({'result': 'Funcionando!!!'}), 200
 
-@api.route("/global_api_exception")
-def global_api_exception():
-    raise GlobalApiException("GlobalApiException ha sido lanzada")
+@api.route("/use_case_example", methods=['POST'])
+def do_use_case_example():
+    """
+    use case example
 
-@api.route("/service_response_exception")
-def service_response_exception():
-    raise ServiceResponseException("ServiceResponseException ha sido lanzada", "CODE1", "2023-05-14", 500)
+    curl --header "Content-Type: application/json" --request POST \
+         --data '{"name":"xyz1", "operation":"+", "operator":"20"}' \
+         http://localhost:5000/use_case_example
 
-@api.route("/validation_exception")
-def validation_exception():
-    raise ValidationException("ValidationException ha sido lanzada", "CODE2")
+    :return: str
+    """
+    p_name = request.json['name']
+    p_operation = request.json['operation']
+    p_operator = int(request.json['operator'])
+    logger_custom = logger_printer('ms-salesforce', '/use_case_example', 'front_client')
 
+    data_request = entity_model.UseCaseRequest(uuid=uuid.UUID,
+                                               name=p_name,
+                                               operation=p_operation,
+                                               operator=p_operator)
+
+    logger_custom.log_message(logging.INFO, 'ms-example', data_request, 'CUUI123', 'operation')
+
+    try:
+        repository = UseCaseRepository.UseCaseRepository()
+        response_use_case = do_something(data_request, repository)
+        data = jsonify({'result': response_use_case.resul})
+        return data, 200
+    except:
+        assert 
