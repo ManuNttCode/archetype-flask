@@ -2,7 +2,7 @@ import abc
 import uuid
 import logging
 
-from domain import entity_model
+from ..domain import entity_model
 
 logging.basicConfig(level=logging.DEBUG)
 

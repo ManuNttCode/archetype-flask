@@ -5,7 +5,8 @@ from typing import List
 class ErrorItem:
     name: str
     description: str
+    code: str 
 
 @dataclass()
 class ErrorCatalog:
-    error_details = List[ErrorItem]
+    error_details: List[ErrorItem]

@@ -1,3 +1,4 @@
 class GlobalApiException(Exception):
-    def __init__(self, code_error):
-        self.code_error = code_error
+    def __init__(self, response):
+        super().__init__(response)
+        self.response = response
