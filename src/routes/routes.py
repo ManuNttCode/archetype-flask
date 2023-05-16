@@ -42,10 +42,10 @@ def do_use_case_example():
         p_operation = request.json['operation']
         p_operator = int(request.json['operator'])
     except KeyError:
-        error_item = ErrorItem(name='BadRequest', description='Missing required parameters')
+        error_item = ErrorItem(name='BadRequest', description='Missing required parameters', code=ValueError.__flags__)
         raise BAD_REQUEST(error_item)
     except ValueError:
-        error_item = ErrorItem(name='ValidationError', description='Invalid parameter value: Expected an integer')
+        error_item = ErrorItem(name='ValidationError', description='Invalid parameter value: Expected an integer', code=ValueError.__flags__)
         raise ValidationException(error_item)
 
     logger_custom = logger_printer('ms-salesforce', '/use_case_example', 'front_client')
@@ -56,7 +56,7 @@ def do_use_case_example():
                                                 operation=p_operation,
                                                 operator=p_operator)
     except Exception as e:
-        error_item = ErrorItem(name='GlobalApiError', description=str(e))
+        error_item = ErrorItem(name='GlobalApiError', description=str(e), code=ValueError.__flags__)
         raise GlobalApiException(error_item)
 
     logger_custom.log_message(logging.INFO, 'ms-example', data_request, 'CUUI123', 'operation')

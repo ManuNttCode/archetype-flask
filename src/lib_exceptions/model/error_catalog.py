@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 @dataclass()
 class ErrorItem:
     name: str
     description: str
-    code: str 
+    code: Optional[str] 
 
 @dataclass()
 class ErrorCatalog:
