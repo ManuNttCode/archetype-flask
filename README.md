@@ -7,7 +7,6 @@ Ejemplo de creación de una plantilla para un microservicio desarrollado en Pyth
 Todo el código definido en el proyecto tiene como objetivo describir elementos básicos necesarios
 con una finalidad didáctica.
 
-```
 
 ## Docker 
 
