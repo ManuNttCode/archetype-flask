@@ -1,0 +1,10 @@
+{
+  "error_details": [
+    {
+      "message": "Parametro de la petición no valido",
+      "code": "MSRP-01",
+      "http_code": "500"
+    }
+  ]
+
+}

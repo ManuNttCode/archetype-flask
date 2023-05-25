@@ -3,13 +3,10 @@ import logging
 import uuid
 from flask import current_app, request, jsonify, Blueprint
 from src.Repository.use_case_repository import UseCaseRepository
-from src.lib_exceptions.exceptions.global_api_exception import GlobalApiException
-from src.lib_exceptions.exceptions.service_response_exception import ServiceResponseException
 from src.lib_exceptions.exceptions.validation_exception import ValidationException
-from src.lib_exceptions.model.error_catalog import ErrorItem
-from src.lib_exceptions.model.error_detail import ErrorDetail
-from src.lib_exceptions.model.service_response_model import ServiceResponseModel
+from src.lib_exceptions.model.error_type import ErrorType
 from src.services.use_case_service import do_something
+
 from src.domain import entity_model
 from ..lib_logs import logger_printer
 
@@ -37,36 +34,29 @@ def do_use_case_example():
 
     :return: str
     """
-    try:
-        p_name = request.json['name']
-        p_operation = request.json['operation']
-        p_operator = int(request.json['operator'])
-    except KeyError:
-        error_item = ErrorItem(name='BadRequest', description='Missing required parameters', code=ValueError.__flags__)
-        raise BAD_REQUEST(error_item)
-    except ValueError:
-        error_item = ErrorItem(name='ValidationError', description='Invalid parameter value: Expected an integer', code=ValueError.__flags__)
-        raise ValidationException(error_item)
+    p_name = request.json['name']
+    p_operation = request.json['operation']
+    p_operator = int(request.json['operator'])
 
-    logger_custom = logger_printer('ms-salesforce', '/use_case_example', 'front_client')
+    if not isinstance(p_name, str):
+        raise ValidationException(code_error='MSRP-01')
 
-    try:
-        data_request = entity_model.UseCaseRequest(uuid=uuid.UUID,
-                                                name=p_name,
-                                                operation=p_operation,
-                                                operator=p_operator)
-    except Exception as e:
-        error_item = ErrorItem(name='GlobalApiError', description=str(e), code=ValueError.__flags__)
-        raise GlobalApiException(error_item)
+    if not isinstance(p_operation, int):
+        raise ValidationException('La operación no puede estar vacía', 'EMPTY_OPERATION')
 
-    logger_custom.log_message(logging.INFO, 'ms-example', data_request, 'CUUI123', 'operation')
+    if not isinstance(p_operator, int):
+        raise ValidationException('El operador debe ser un número', 'INVALID_OPERATOR')
+
+    current_app.logger.info(f"Name={p_name} operation={p_operation} operator={p_operator}")
+
+    data_request = entity_model.UseCaseRequest(uuid='',
+                                               name=p_name,
+                                               operation=p_operation,
+                                               operator=p_operator)
+
     repository = UseCaseRepository()
-
-    try:
-        response_use_case = do_something(data_request, repository)
-    except Exception as e:
-        error_detail = ServiceResponseModel(message=str(e), http_code=500)
-        raise ServiceResponseException(error_detail)
+    response_use_case = do_something(data_request, repository)
 
     data = jsonify({'result': response_use_case.resul})
+
     return data, 201
