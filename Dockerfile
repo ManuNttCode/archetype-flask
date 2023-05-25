@@ -13,4 +13,4 @@ ENV FLASK_APP=/code/src/app.py FLASK_RUN_HOST=0.0.0.0
 
 COPY . .
 
-CMD ["flask", "run", "--port=6060"]
+CMD ["python", "-m", "flask", "run", "--port=6060"]
