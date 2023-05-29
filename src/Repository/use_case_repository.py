@@ -1,11 +1,10 @@
 import abc
 import uuid
-import logging
 
+from src.lib_logs import logger_printer
 from ..domain import entity_model
 
-logging.basicConfig(level=logging.DEBUG)
-
+logger = logger_printer('ms-example', 'self', '/use_case_example')
 
 class AbstractUseCaseRepository(abc.ABC):
     """
@@ -31,7 +30,7 @@ class UseCaseRepository(AbstractUseCaseRepository):
 
     def add(self, entity: entity_model.UseCaseEntity) -> bool:
         result: bool = False
-        logging.info("/use_case_repository.add")
+        logger.log_message(nivel='INFO', mensaje='/use_case_repository.add', proceso='add operation repository')
         if entity is not None:
             result = True
             self.database.append(entity)
@@ -41,7 +40,7 @@ class UseCaseRepository(AbstractUseCaseRepository):
         index = 0
         enc = False
         result: entity_model.UseCaseEntity = None
-        logging.info("/use_case_repository.get")
+        logger.log_message(nivel='INFO', mensaje='/use_case_repository.get', proceso='add operation repository')
         while (index < len(self.database)) and not enc:
             aux: entity_model.UseCaseEntity = self.database[index]
             if aux.uuid == uuid.UUID(p_uuid):

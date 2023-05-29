@@ -1,10 +1,12 @@
 
-import logging
-
 from datetime import date
+
 from ..domain import entity_model
 from ..Repository import use_case_repository
+from src.lib_logs import logger_printer
+from src.lib_exceptions.exceptions.global_api_exception import GlobalApiException
 
+logger = logger_printer('ms-example', 'self', '/use_case_example')
 
 def do_something(request: entity_model.UseCaseRequest,
                  repository: use_case_repository.AbstractUseCaseRepository) -> entity_model.UseCaseResponse:
@@ -18,9 +20,10 @@ def do_something(request: entity_model.UseCaseRequest,
     """
 
     if request is None:
-        print('Request vacia')
+        logger.log_message(nivel='ERROR', mensaje='Los parametros de la request estan vacios', proceso='do_someting.service')
+        raise GlobalApiException('MSRP-01')
 
-    logging.info("/use_case_service.do_something")
+    logger.log_message(nivel='INFO', mensaje='/use_case_service.do_something', proceso='do_someting.service')
 
     entity = entity_model.UseCaseEntity(uuid=request.uuid,
                                         name=request.name,

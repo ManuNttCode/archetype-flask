@@ -1,16 +1,16 @@
 from http.client import BAD_REQUEST
-import logging
 import uuid
 from flask import current_app, request, jsonify, Blueprint
 from src.Repository.use_case_repository import UseCaseRepository
 from src.lib_exceptions.exceptions.validation_exception import ValidationException
-from src.lib_exceptions.model.error_type import ErrorType
 from src.services.use_case_service import do_something
+from src.lib_logs import logger_printer
 
 from src.domain import entity_model
 from ..lib_logs import logger_printer
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
+logger = logger_printer('ms-example', 'https', 'client-examples')
 
 @api.route('/', methods=['GET'])
 def root():
@@ -18,10 +18,7 @@ def root():
     Root entrypoint
     :return: str
     """
-    logger_custom = logger_printer('ms-salesforce', 'https', 'Cloud SQL')
-    logger_custom.log_message(logging.INFO, 'Mensaje de prueba', 'Payload', '202', 'self', 'Proceso')
-    
-    return jsonify({'result': 'Funcionando!!!'}), 200
+    return jsonify({'result': 'working...'}), 200
 
 @api.route("/use_case_example", methods=['POST'])
 def do_use_case_example():
@@ -36,19 +33,21 @@ def do_use_case_example():
     """
     p_name = request.json['name']
     p_operation = request.json['operation']
-    p_operator = int(request.json['operator'])
+    p_operator = request.json['operator']
 
-    if not isinstance(p_name, str):
+    if not p_name or not isinstance(p_name, str):
+        logger.log_message(nivel='ERROR', mensaje='El parámetro "name" no es correcto', carga_util={'name': p_name}, codigo_http='422', proceso='request')
         raise ValidationException(code_error='MSRP-01')
 
-    if not isinstance(p_operation, int):
-        raise ValidationException('La operación no puede estar vacía', 'EMPTY_OPERATION')
+    if not p_operation or not isinstance(p_operation, str):
+        logger.log_message(nivel='ERROR', mensaje='El parámetro "operation" no es correcto', carga_util={'operation': p_operation}, codigo_http='422', proceso='request')
+        raise ValidationException(code_error='MSRP-01')
 
-    if not isinstance(p_operator, int):
-        raise ValidationException('El operador debe ser un número', 'INVALID_OPERATOR')
+    if not p_operator or not isinstance(p_operator, int):
+        logger.log_message(nivel='ERROR', mensaje='El parámetro "operator" no es correcto', carga_util={'operator': p_operator}, codigo_http='422', proceso='request')
+        raise ValidationException(code_error='MSRP-01')
 
-    current_app.logger.info(f"Name={p_name} operation={p_operation} operator={p_operator}")
-
+    logger.log_message(nivel='INFO', mensaje='request in progress', proceso='request')
     data_request = entity_model.UseCaseRequest(uuid='',
                                                name=p_name,
                                                operation=p_operation,
@@ -56,7 +55,7 @@ def do_use_case_example():
 
     repository = UseCaseRepository()
     response_use_case = do_something(data_request, repository)
+    logger.log_message(nivel='INFO', mensaje='success request', codigo_http='201', proceso='request')
 
     data = jsonify({'result': response_use_case.resul})
-
     return data, 201

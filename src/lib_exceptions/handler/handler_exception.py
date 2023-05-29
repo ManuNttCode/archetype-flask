@@ -19,7 +19,7 @@ from src.lib_exceptions.model.error_catalog import ErrorCatalog, ErrorItem
 
 def handle_exceptions(app):
 
-    @app.errorhandler(BadRequest) #En que casos se usa esta excepcion?
+    @app.errorhandler(BadRequest)
     def handle_constraint_violation_exception(error):
         pass
 
@@ -32,7 +32,7 @@ def handle_exceptions(app):
     def handle_global_api_exception(error):
         return find_response_error_catalog(error.code_error, error.error_type)
 
-    @app.errorhandler(ServiceResponseException) #En que casos se usa esta excepcion?
+    @app.errorhandler(ServiceResponseException)
     def handle_service_response_exception(error):
         status_code = error.http_code
 
